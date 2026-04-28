@@ -22,11 +22,12 @@
     "resend": "^6.12.2"
   },
   "devDependencies": {
+    "@tailwindcss/postcss": "^4",
     "autoprefixer": "^10.5.0",
     "babel-plugin-react-compiler": "1.0.0",
     "jest": "^30.3.0",
     "jest-environment-node": "^30.3.0",
-    "postcss": "^8.5.12",
-    "tailwindcss": "^4.2.4"
+    "eslint": "^9",
+    "tailwindcss": "^4"
   }
 }

@@ -22,6 +22,10 @@ const INITIAL_FORM = {
     keywordCheck: { enabled: false, keyword: '' },
 };
 
+const inputClass = 'w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm text-gray-900 bg-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow';
+const selectClass = 'w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow';
+const labelClass = 'block text-sm font-medium text-gray-700 mb-1.5';
+
 export default function NewMonitorPage() {
     const router = useRouter();
     const [form, setForm] = useState(INITIAL_FORM);
@@ -29,23 +33,20 @@ export default function NewMonitorPage() {
     const [saving, setSaving] = useState(false);
 
     function handleChange(e) {
-        const { name, value, type, checked } = e.target;
+        const { name, value, checked } = e.target;
         if (name === 'keywordEnabled') {
             setForm((f) => ({ ...f, keywordCheck: { ...f.keywordCheck, enabled: checked } }));
         } else if (name === 'keyword') {
             setForm((f) => ({ ...f, keywordCheck: { ...f.keywordCheck, keyword: value } }));
         } else {
-            setForm((f) => ({ ...f, [name]: type === 'number' ? Number(value) : value }));
+            const NUMERIC_FIELDS = ['interval', 'expectedStatusCode', 'timeoutMs'];
+            setForm((f) => ({ ...f, [name]: NUMERIC_FIELDS.includes(name) ? Number(value) : value }));
         }
     }
 
     function validate() {
         if (!form.name.trim()) return 'Name is required';
-        try {
-            new URL(form.url);
-        } catch {
-            return 'URL must be a valid URL';
-        }
+        try { new URL(form.url); } catch { return 'URL must be a valid URL'; }
         if (!form.url.startsWith('http://') && !form.url.startsWith('https://')) {
             return 'URL must start with http:// or https://';
         }
@@ -55,10 +56,7 @@ export default function NewMonitorPage() {
     async function handleSubmit(e) {
         e.preventDefault();
         const validationError = validate();
-        if (validationError) {
-            setError(validationError);
-            return;
-        }
+        if (validationError) { setError(validationError); return; }
 
         setSaving(true);
         setError('');
@@ -79,144 +77,97 @@ export default function NewMonitorPage() {
     }
 
     return (
-        <div className="max-w-2xl">
-            <div className="flex items-center gap-4 mb-8">
-                <Link href="/dashboard/monitors" className="text-gray-500 hover:text-gray-700 text-sm">
+        <div className="p-8 max-w-2xl">
+            <div className="flex items-center gap-3 mb-8">
+                <Link href="/dashboard/monitors" className="text-sm text-gray-500 hover:text-gray-700 transition-colors">
                     ← Back
                 </Link>
+                <span className="text-gray-300">/</span>
                 <h1 className="text-2xl font-bold text-gray-900">New Monitor</h1>
             </div>
 
-            <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-sm border border-gray-100 p-6 space-y-5">
-                {error && (
-                    <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-sm">
-                        {error}
-                    </div>
-                )}
+            <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                {/* Form sections */}
+                <div className="p-6 space-y-5">
+                    <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider">Basic Info</h2>
 
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Name <span className="text-red-500">*</span>
+                    {error && (
+                        <div className="flex items-start gap-3 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+                            <span className="mt-0.5">⚠</span>
+                            <span>{error}</span>
+                        </div>
+                    )}
+
+                    <div>
+                        <label className={labelClass}>Monitor Name <span className="text-red-500">*</span></label>
+                        <input type="text" name="name" value={form.name} onChange={handleChange} required
+                            placeholder="My Website" className={inputClass} />
+                    </div>
+
+                    <div>
+                        <label className={labelClass}>URL <span className="text-red-500">*</span></label>
+                        <input type="url" name="url" value={form.url} onChange={handleChange} required
+                            placeholder="https://example.com" className={inputClass} />
+                    </div>
+                </div>
+
+                <div className="border-t border-gray-100 p-6 space-y-5">
+                    <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider">Check Settings</h2>
+
+                    <div className="grid grid-cols-2 gap-4">
+                        <div>
+                            <label className={labelClass}>Method</label>
+                            <select name="method" value={form.method} onChange={handleChange} className={selectClass}>
+                                {METHOD_OPTIONS.map((m) => <option key={m}>{m}</option>)}
+                            </select>
+                        </div>
+                        <div>
+                            <label className={labelClass}>Check Interval</label>
+                            <select name="interval" value={form.interval} onChange={handleChange} className={selectClass}>
+                                {INTERVAL_OPTIONS.map((i) => (
+                                    <option key={i} value={i}>{i} minute{i > 1 ? 's' : ''}</option>
+                                ))}
+                            </select>
+                        </div>
+                        <div>
+                            <label className={labelClass}>Expected Status Code</label>
+                            <input type="number" name="expectedStatusCode" value={form.expectedStatusCode}
+                                onChange={handleChange} min="100" max="599" className={inputClass} />
+                        </div>
+                        <div>
+                            <label className={labelClass}>Timeout</label>
+                            <select name="timeoutMs" value={form.timeoutMs} onChange={handleChange} className={selectClass}>
+                                {TIMEOUT_OPTIONS.map((t) => (
+                                    <option key={t.value} value={t.value}>{t.label}</option>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="border-t border-gray-100 p-6 space-y-4">
+                    <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider">Keyword Check</h2>
+
+                    <label className="flex items-center gap-3 cursor-pointer">
+                        <input type="checkbox" name="keywordEnabled" checked={form.keywordCheck.enabled}
+                            onChange={handleChange}
+                            className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500" />
+                        <span className="text-sm font-medium text-gray-700">Check for keyword in response body</span>
                     </label>
-                    <input
-                        type="text"
-                        name="name"
-                        value={form.name}
-                        onChange={handleChange}
-                        required
-                        placeholder="My Website"
-                        className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                </div>
 
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                        URL <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                        type="url"
-                        name="url"
-                        value={form.url}
-                        onChange={handleChange}
-                        required
-                        placeholder="https://example.com"
-                        className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Method</label>
-                        <select
-                            name="method"
-                            value={form.method}
-                            onChange={handleChange}
-                            className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        >
-                            {METHOD_OPTIONS.map((m) => <option key={m}>{m}</option>)}
-                        </select>
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Check Interval</label>
-                        <select
-                            name="interval"
-                            value={form.interval}
-                            onChange={handleChange}
-                            className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        >
-                            {INTERVAL_OPTIONS.map((i) => (
-                                <option key={i} value={i}>{i} minute{i > 1 ? 's' : ''}</option>
-                            ))}
-                        </select>
-                    </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Expected Status Code</label>
-                        <input
-                            type="number"
-                            name="expectedStatusCode"
-                            value={form.expectedStatusCode}
-                            onChange={handleChange}
-                            min="100"
-                            max="599"
-                            className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Timeout</label>
-                        <select
-                            name="timeoutMs"
-                            value={form.timeoutMs}
-                            onChange={handleChange}
-                            className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        >
-                            {TIMEOUT_OPTIONS.map((t) => (
-                                <option key={t.value} value={t.value}>{t.label}</option>
-                            ))}
-                        </select>
-                    </div>
-                </div>
-
-                <div>
-                    <div className="flex items-center gap-2 mb-2">
-                        <input
-                            type="checkbox"
-                            name="keywordEnabled"
-                            id="keywordEnabled"
-                            checked={form.keywordCheck.enabled}
-                            onChange={handleChange}
-                            className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                        />
-                        <label htmlFor="keywordEnabled" className="text-sm font-medium text-gray-700">
-                            Keyword check
-                        </label>
-                    </div>
                     {form.keywordCheck.enabled && (
-                        <input
-                            type="text"
-                            name="keyword"
-                            value={form.keywordCheck.keyword}
-                            onChange={handleChange}
-                            placeholder="Expected keyword in response body"
-                            className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
+                        <input type="text" name="keyword" value={form.keywordCheck.keyword} onChange={handleChange}
+                            placeholder="Expected keyword…" className={inputClass} />
                     )}
                 </div>
 
-                <div className="flex gap-3 pt-2">
-                    <button
-                        type="submit"
-                        disabled={saving}
-                        className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors text-sm font-medium disabled:opacity-50"
-                    >
-                        {saving ? 'Creating...' : 'Create Monitor'}
+                <div className="border-t border-gray-100 bg-gray-50 px-6 py-4 flex items-center gap-3">
+                    <button type="submit" disabled={saving}
+                        className="bg-blue-600 text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm">
+                        {saving ? 'Creating…' : 'Create Monitor'}
                     </button>
-                    <Link
-                        href="/dashboard/monitors"
-                        className="px-6 py-2 rounded-md border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-50"
-                    >
+                    <Link href="/dashboard/monitors"
+                        className="px-5 py-2.5 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-800 hover:bg-white border border-transparent hover:border-gray-200 transition-all">
                         Cancel
                     </Link>
                 </div>
