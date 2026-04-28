@@ -11,12 +11,12 @@ import {
 
 /**
  * Renders a response time line chart for a monitor's check results.
- * Must be a client component — Recharts uses browser APIs (ResizeObserver, canvas).
+ * Must be a client component, Recharts uses browser APIs (ResizeObserver, canvas).
  *
  * @param {{ data: Array<{ timestamp: string, responseTimeMs: number, status: string }> }} props
  */
 export default function ResponseTimeChart({ data }) {
-    // Results arrive newest-first from the API — reverse so the chart reads left-to-right
+    // Results arrive newest-first from the API, reverse so the chart reads left-to-right
     const chartData = [...data].reverse().map((r) => ({
         time: new Date(r.timestamp).toLocaleTimeString([], {
             hour: '2-digit',

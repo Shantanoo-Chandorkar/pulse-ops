@@ -66,7 +66,7 @@ function buildWebhookPayload(monitor, incident, eventType) {
 
 /**
  * Dispatches a single alert (email or webhook) and records the outcome in AlertLog.
- * Never throws — a failed alert must not interrupt the check pipeline.
+ * Never throws, a failed alert must not interrupt the check pipeline.
  *
  * @param {object} alert     - Mongoose Alert document.
  * @param {object} incident  - Mongoose Incident document.
@@ -107,7 +107,7 @@ async function dispatchAlert(alert, incident, monitor, eventType) {
             status = 'sent';
         }
     } catch (err) {
-        // Log alertId and channel only — never log email addresses or webhook URLs
+        // Log alertId and channel only, never log email addresses or webhook URLs
         console.error('[alertService] dispatch failed', {
             alertId: alert._id.toString(),
             channel: alert.channel,

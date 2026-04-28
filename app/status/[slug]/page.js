@@ -34,8 +34,8 @@ function formatDuration(ms) {
 }
 
 /**
- * Public status page — unauthenticated, read-only.
- * Exposes monitor names and statuses only — not URLs, methods, or any config.
+ * Public status page, unauthenticated, read-only.
+ * Exposes monitor names and statuses only, not URLs, methods, or any config.
  *
  * @param {{ params: { slug: string } }} props
  */
@@ -122,9 +122,9 @@ export default async function StatusPage({ params }) {
                                 return (
                                     <li key={inc._id.toString()} className="text-sm text-gray-700">
                                         <span className="font-medium">{mon?.name ?? 'Unknown monitor'}</span>
-                                        {' — '}
+                                        {', '}
                                         <span className="text-green-600">Resolved</span>
-                                        {' — '}
+                                        {', '}
                                         {new Date(inc.startedAt).toLocaleDateString()}{' '}
                                         {new Date(inc.startedAt).toLocaleTimeString([], {
                                             hour: '2-digit',

@@ -17,7 +17,7 @@ export default async function DashboardLayout({ children }) {
                         <div className="w-7 h-7 bg-blue-600 rounded-lg flex items-center justify-center">
                             <span className="text-white text-xs font-bold">U</span>
                         </div>
-                        <span className="text-white font-semibold text-sm">Uptime Monitor</span>
+                        <span className="text-white font-semibold text-sm">PulseOps</span>
                     </div>
                 </div>
 

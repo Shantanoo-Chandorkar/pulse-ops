@@ -11,7 +11,7 @@ const NAV_LINKS = [
 ];
 
 /**
- * Client component — needs usePathname for active link highlighting
+ * Client component, needs usePathname for active link highlighting
  * and signOut for the sign-out button.
  *
  * @param {{ email: string, statusPageSlug: string|null }} props

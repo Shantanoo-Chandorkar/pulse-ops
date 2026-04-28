@@ -33,7 +33,7 @@ function StatusPill({ status }) {
 }
 
 function formatDuration(ms) {
-    if (!ms) return '—';
+    if (!ms) return ',';
     const s = Math.round(ms / 1000);
     if (s < 60) return `${s}s`;
     const m = Math.floor(s / 60);
@@ -277,7 +277,7 @@ export default function MonitorDetailPage() {
                 <h2 className="text-sm font-semibold text-gray-700 mb-4">Incident History</h2>
                 {incidents.length === 0 ? (
                     <div className="text-center py-8">
-                        <p className="text-sm text-gray-400">No incidents recorded — great uptime! 🎉</p>
+                        <p className="text-sm text-gray-400">No incidents recorded, great uptime! 🎉</p>
                     </div>
                 ) : (
                     <table className="min-w-full text-sm">

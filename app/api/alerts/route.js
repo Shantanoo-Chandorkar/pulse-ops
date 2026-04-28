@@ -66,7 +66,7 @@ export async function GET(request) {
 /**
  * POST /api/alerts
  * Creates a new alert for a monitor.
- * The monitorId must belong to the authenticated user — prevents cross-tenant alert creation.
+ * The monitorId must belong to the authenticated user, prevents cross-tenant alert creation.
  */
 export async function POST(request) {
     const session = await getServerSession(authOptions);

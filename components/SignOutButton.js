@@ -2,7 +2,7 @@
 import { signOut } from 'next-auth/react';
 
 /**
- * Sign out button — client component because signOut() is a browser-side
+ * Sign out button, client component because signOut() is a browser-side
  * next-auth/react call that cannot run in a server component.
  */
 export default function SignOutButton() {

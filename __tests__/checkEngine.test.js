@@ -53,7 +53,7 @@ beforeEach(() => {
     jest.clearAllMocks();
 });
 
-describe('runCheck — happy path', () => {
+describe('runCheck, happy path', () => {
     it('returns status up when response matches expected status code', async () => {
         global.fetch = mockFetch(200);
         const monitor = makeMonitor();
@@ -104,9 +104,9 @@ describe('runCheck — happy path', () => {
     });
 });
 
-describe('runCheck — down on wrong status code', () => {
+describe('runCheck, down on wrong status code', () => {
     it('returns status down when status code does not match expected', async () => {
-        // Both initial attempt and retry return 500 — fetch called twice
+        // Both initial attempt and retry return 500, fetch called twice
         global.fetch = mockFetch(500);
         const monitor = makeMonitor();
 
@@ -131,7 +131,7 @@ describe('runCheck — down on wrong status code', () => {
     });
 });
 
-describe('runCheck — retry behaviour', () => {
+describe('runCheck, retry behaviour', () => {
     it('returns up if first attempt fails but retry succeeds', async () => {
         // First call → 500, second call → 200
         global.fetch = jest.fn()
@@ -161,7 +161,7 @@ describe('runCheck — retry behaviour', () => {
     });
 });
 
-describe('runCheck — network error / timeout', () => {
+describe('runCheck, network error / timeout', () => {
     it('returns status down on network error', async () => {
         global.fetch = mockFetchError('fetch failed');
         const monitor = makeMonitor();
@@ -176,7 +176,7 @@ describe('runCheck — network error / timeout', () => {
     });
 });
 
-describe('runCheck — keyword check', () => {
+describe('runCheck, keyword check', () => {
     it('returns up when keyword is present in response body', async () => {
         global.fetch = jest.fn().mockResolvedValue({
             status: 200,

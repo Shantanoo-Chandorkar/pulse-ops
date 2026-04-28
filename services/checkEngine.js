@@ -80,7 +80,7 @@ async function attemptRequest(monitor) {
  *
  * Incident rules:
  *   - Open an incident after 2 consecutive failures, but only if the monitor
- *     is not already marked 'down' — prevents duplicate open incidents.
+ *     is not already marked 'down', prevents duplicate open incidents.
  *   - Resolve the open incident on the first successful check after a down period.
  *
  * @param {object} monitor - Mongoose Monitor document (will be mutated and saved).
@@ -108,13 +108,13 @@ async function finalise(monitor, result) {
         await monitor.save();
 
         // Open incident only after 2 consecutive failures and only if not already
-        // marked down — avoids creating duplicate incidents for ongoing outages
+        // marked down, avoids creating duplicate incidents for ongoing outages
         if (monitor.consecutiveFailures >= 2 && monitor.status !== 'down') {
             const incident = await incidentService.openIncident(monitor, result.error || `HTTP ${result.statusCode}`);
             await alertService.sendAlerts(incident, monitor, 'down');
         }
     } else if (result.status === 'up' && monitor.status === 'down') {
-        // Monitor recovered — resolve the open incident and reset failure state
+        // Monitor recovered, resolve the open incident and reset failure state
         const incident = await incidentService.resolveIncident(monitor);
         if (incident) {
             await alertService.sendAlerts(incident, monitor, 'recovered');
