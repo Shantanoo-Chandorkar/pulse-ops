@@ -1,6 +1,7 @@
 import { connectDB } from '@/lib/mongoose';
 import CheckResult from '@/models/CheckResult';
 import * as incidentService from '@/services/incidentService';
+import * as alertService from '@/services/alertService';
 
 /**
  * Pauses execution for the given number of milliseconds.
@@ -109,13 +110,15 @@ async function finalise(monitor, result) {
         // Open incident only after 2 consecutive failures and only if not already
         // marked down — avoids creating duplicate incidents for ongoing outages
         if (monitor.consecutiveFailures >= 2 && monitor.status !== 'down') {
-            await incidentService.openIncident(monitor, result.error || `HTTP ${result.statusCode}`);
-            // alertService wired in Step 7
+            const incident = await incidentService.openIncident(monitor, result.error || `HTTP ${result.statusCode}`);
+            await alertService.sendAlerts(incident, monitor, 'down');
         }
     } else if (result.status === 'up' && monitor.status === 'down') {
         // Monitor recovered — resolve the open incident and reset failure state
-        await incidentService.resolveIncident(monitor);
-        // alertService wired in Step 7
+        const incident = await incidentService.resolveIncident(monitor);
+        if (incident) {
+            await alertService.sendAlerts(incident, monitor, 'recovered');
+        }
     } else {
         monitor.status = 'up';
         if (monitor.consecutiveFailures > 0) {
