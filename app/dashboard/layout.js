@@ -15,7 +15,7 @@ export default async function DashboardLayout({ children }) {
                 <div className="px-5 py-5 border-b border-slate-700">
                     <div className="flex items-center gap-2.5">
                         <div className="w-7 h-7 bg-blue-600 rounded-lg flex items-center justify-center">
-                            <span className="text-white text-xs font-bold">U</span>
+                            <span className="text-white text-xs font-bold">PO</span>
                         </div>
                         <span className="text-white font-semibold text-sm">PulseOps</span>
                     </div>
