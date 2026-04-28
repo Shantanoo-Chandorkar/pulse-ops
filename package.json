@@ -5,14 +5,23 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "test": "jest"
   },
   "dependencies": {
+    "@auth/mongodb-adapter": "^3.11.2",
+    "mongodb": "^6.21.0",
+    "mongoose": "^9.6.0",
     "next": "16.2.4",
+    "next-auth": "^4.24.14",
+    "nodemailer": "^7.0.13",
     "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react-dom": "19.2.4",
+    "resend": "^6.12.2"
   },
   "devDependencies": {
-    "babel-plugin-react-compiler": "1.0.0"
+    "babel-plugin-react-compiler": "1.0.0",
+    "jest": "^30.3.0",
+    "jest-environment-node": "^30.3.0"
   }
 }
