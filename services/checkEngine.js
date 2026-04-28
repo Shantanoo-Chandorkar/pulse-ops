@@ -1,5 +1,6 @@
 import { connectDB } from '@/lib/mongoose';
 import CheckResult from '@/models/CheckResult';
+import * as incidentService from '@/services/incidentService';
 
 /**
  * Pauses execution for the given number of milliseconds.
@@ -73,9 +74,13 @@ async function attemptRequest(monitor) {
 }
 
 /**
- * Persists the check result and updates the monitor's state fields.
- * Manages consecutiveFailures count for use by the incident service (Step 6).
- * Does NOT open or resolve incidents — that responsibility belongs to incidentService.
+ * Persists the check result, updates monitor state fields, and triggers
+ * incident lifecycle transitions when the monitor crosses failure thresholds.
+ *
+ * Incident rules:
+ *   - Open an incident after 2 consecutive failures, but only if the monitor
+ *     is not already marked 'down' — prevents duplicate open incidents.
+ *   - Resolve the open incident on the first successful check after a down period.
  *
  * @param {object} monitor - Mongoose Monitor document (will be mutated and saved).
  * @param {{ status: 'up'|'down', statusCode: number|null, responseTimeMs: number, error: string|null }} result
@@ -99,15 +104,26 @@ async function finalise(monitor, result) {
 
     if (result.status === 'down') {
         monitor.consecutiveFailures += 1;
-        monitor.status = 'down';
+        await monitor.save();
+
+        // Open incident only after 2 consecutive failures and only if not already
+        // marked down — avoids creating duplicate incidents for ongoing outages
+        if (monitor.consecutiveFailures >= 2 && monitor.status !== 'down') {
+            await incidentService.openIncident(monitor, result.error || `HTTP ${result.statusCode}`);
+            // alertService wired in Step 7
+        }
+    } else if (result.status === 'up' && monitor.status === 'down') {
+        // Monitor recovered — resolve the open incident and reset failure state
+        await incidentService.resolveIncident(monitor);
+        // alertService wired in Step 7
     } else {
+        monitor.status = 'up';
         if (monitor.consecutiveFailures > 0) {
             monitor.consecutiveFailures = 0;
         }
-        monitor.status = 'up';
+        await monitor.save();
     }
 
-    await monitor.save();
     return result;
 }
 
@@ -116,9 +132,8 @@ async function finalise(monitor, result) {
  * Retries once after 30 seconds on failure to suppress transient blips before
  * recording a definitive down result.
  *
- * Writes a CheckResult document and updates the Monitor's status fields.
- * Does NOT open incidents or send alerts — the dispatcher (Step 5) calls
- * incidentService after this function returns.
+ * Writes a CheckResult document, updates Monitor state, and triggers
+ * incident open/resolve transitions via incidentService.
  *
  * @param {object} monitor - Mongoose Monitor document.
  * @returns {Promise<{ status: 'up'|'down', statusCode: number|null, responseTimeMs: number, error: string|null }>}
