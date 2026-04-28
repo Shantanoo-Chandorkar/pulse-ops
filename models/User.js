@@ -8,6 +8,8 @@ const UserSchema = new mongoose.Schema({
     email: { type: String, unique: true },
     emailVerified: { type: Date },
     image: { type: String },
+    // Unique slug for the public status page — auto-generated on first sign-in
+    statusPageSlug: { type: String, unique: true, sparse: true },
 });
 
 export default mongoose.models.User || mongoose.model('User', UserSchema);

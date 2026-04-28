@@ -12,16 +12,21 @@
     "@auth/mongodb-adapter": "^3.11.2",
     "mongodb": "^6.21.0",
     "mongoose": "^9.6.0",
+    "nanoid": "^5.1.9",
     "next": "16.2.4",
     "next-auth": "^4.24.14",
     "nodemailer": "^7.0.13",
     "react": "19.2.4",
     "react-dom": "19.2.4",
+    "recharts": "^3.8.1",
     "resend": "^6.12.2"
   },
   "devDependencies": {
+    "autoprefixer": "^10.5.0",
     "babel-plugin-react-compiler": "1.0.0",
     "jest": "^30.3.0",
-    "jest-environment-node": "^30.3.0"
+    "jest-environment-node": "^30.3.0",
+    "postcss": "^8.5.12",
+    "tailwindcss": "^4.2.4"
   }
 }
