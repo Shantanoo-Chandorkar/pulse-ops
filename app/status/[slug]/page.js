@@ -95,7 +95,7 @@ export default async function StatusPage({ params }) {
                                             />
                                             <span className={`text-sm ${isDown ? 'text-red-700' : 'text-green-700'}`}>
                                                 {isDown
-                                                    ? `Down since ${openInc ? new Date(openInc.startedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'unknown'}`
+                                                    ? `Down since ${openInc ? new Date(openInc.startedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'unknown'} (UTC)`
                                                     : 'Operational'}
                                             </span>
                                         </div>
