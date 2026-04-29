@@ -5,6 +5,7 @@ on:
     # Every 5 minutes — GitHub Actions minimum interval.
     # Monitors with a 1-minute interval will be checked at most every 5 minutes.
     - cron: '*/5 * * * *'
+  workflow_dispatch:
 
 jobs:
   dispatch:
