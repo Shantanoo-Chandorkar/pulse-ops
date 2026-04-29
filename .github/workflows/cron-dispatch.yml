@@ -14,4 +14,4 @@ jobs:
         run: |
           curl --fail \
             -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
-            "${{ secrets.LOCALHOST_URL }}/api/internal/checks/dispatch"
+            "${{ secrets.VERCEL_APP_URL }}/api/internal/checks/dispatch"
