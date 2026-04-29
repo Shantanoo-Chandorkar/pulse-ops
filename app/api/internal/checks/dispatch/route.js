@@ -7,11 +7,11 @@ const BATCH_SIZE = 10;
 /**
  * GET /api/internal/checks/dispatch
  *
- * Called by Vercel cron every minute. Finds all active monitors whose
+ * Called by GitHub Actions every 5 minutes. Finds all active monitors whose
  * nextCheckAt is in the past and runs their checks in parallel batches.
  *
- * Security: guarded by CRON_SECRET, not behind NextAuth because Vercel's
- * cron infrastructure cannot carry a user session.
+ * Security: guarded by CRON_SECRET, not behind NextAuth because GitHub
+ * Actions cannot carry a user session.
  *
  * Batching at 10: keeps memory and concurrency within Vercel Hobby tier limits.
  * Promise.allSettled ensures one failing check never cancels the rest.

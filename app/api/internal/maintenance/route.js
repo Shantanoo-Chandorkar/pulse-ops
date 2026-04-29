@@ -1,3 +1,6 @@
+import { connectDB } from '@/lib/mongoose';
+import CheckResult from '@/models/CheckResult';
+
 export async function GET(request) {
     const authHeader = request.headers.get('authorization');
     if (!authHeader || authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
