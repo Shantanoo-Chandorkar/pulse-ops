@@ -48,7 +48,7 @@ export default function IncidentsPage() {
     }
 
     return (
-        <div>
+        <div className='p-8'>
             <h1 className="text-2xl font-bold text-gray-900 mb-8">Incidents</h1>
 
             {incidents.length === 0 ? (

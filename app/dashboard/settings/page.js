@@ -94,7 +94,7 @@ export default function SettingsPage() {
     }
 
     return (
-        <div className="max-w-2xl">
+        <div className="p-8">
             <h1 className="text-2xl font-bold text-gray-900 mb-8">Settings</h1>
 
             <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
